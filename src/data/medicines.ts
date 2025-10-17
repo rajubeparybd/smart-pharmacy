@@ -48,7 +48,7 @@ export const medicines: Medicine[] = [
     name: 'Cetirizine 10mg',
     price: 15,
     unit: 'strip',
-    stock: 0 // Out of stock
+    stock: 0
   },
   {
     id: '8',
