@@ -57,7 +57,7 @@ export default function Home() {
             <div className="w-full flex flex-col items-center gap-6 px-4">
               <Button 
                 variant="primary"
-                onClick={() => alert('Select Medicine feature coming soon!')}
+                onClick={() => router.push('/select-medicine')}
               >
                 Select Medicine
               </Button>

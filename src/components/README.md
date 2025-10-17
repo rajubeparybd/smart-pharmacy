@@ -124,3 +124,73 @@ import { UploadedFile } from '@/components';
 />
 ```
 
+## SearchBar
+
+Search input component with integrated search button.
+
+### Props
+- `value`: `string` - Current search value
+- `onChange`: `(value: string) => void` - Callback when value changes
+- `onSearch`: `() => void` - Callback when search is triggered
+
+### Usage
+```tsx
+import { SearchBar } from '@/components';
+
+<SearchBar 
+  value={searchQuery}
+  onChange={setSearchQuery}
+  onSearch={handleSearch}
+/>
+```
+
+## MedicineCard
+
+Medicine display card with add to cart and quantity controls. Automatically handles stock management.
+
+### Props
+- `medicine`: `Medicine` - Medicine object with id, name, price, unit, stock
+- `quantity`: `number` - Current quantity in cart
+- `onAdd`: `() => void` - Callback when adding to cart
+- `onIncrement`: `() => void` - Callback to increase quantity
+- `onDecrement`: `() => void` - Callback to decrease quantity
+
+### Features
+- ✅ Shows "Out of Stock" badge when stock is 0
+- ✅ Shows "Only X left" warning when stock is low (≤ 10)
+- ✅ Displays current stock count
+- ✅ Disables "Add to Cart" when out of stock
+- ✅ Disables increment button when max stock reached
+- ✅ Visual feedback with reduced opacity for out of stock items
+
+### Usage
+```tsx
+import { MedicineCard } from '@/components';
+
+<MedicineCard 
+  medicine={{ id: '1', name: 'Paracetamol 500mg', price: 20, unit: 'strip', stock: 50 }}
+  quantity={2}
+  onAdd={handleAdd}
+  onIncrement={handleIncrement}
+  onDecrement={handleDecrement}
+/>
+```
+
+## CartIcon
+
+Shopping cart icon with item count badge.
+
+### Props
+- `itemCount`: `number` - Number of items in cart
+- `onClick`: `() => void` - Callback when cart is clicked
+
+### Usage
+```tsx
+import { CartIcon } from '@/components';
+
+<CartIcon 
+  itemCount={3}
+  onClick={handleCartClick}
+/>
+```
+

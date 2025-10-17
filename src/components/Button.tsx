@@ -13,7 +13,7 @@ export default function Button({
   className = '',
   ...props 
 }: ButtonProps) {
-  const baseStyles = "w-full max-w-[448px] h-[68px] rounded-[24px] font-bold flex items-center justify-center transition-all hover:scale-[1.02] active:scale-[0.98]";
+  const baseStyles = "w-full hover:cursor-pointer max-w-[448px] h-[68px] rounded-[24px] font-bold flex items-center justify-center transition-all hover:scale-[1.02] active:scale-[0.98]";
   
   const variantStyles: Record<ButtonVariant, { style: React.CSSProperties }> = {
     primary: {
