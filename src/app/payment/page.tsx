@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/Button';
 import { CartItem } from '@/types/medicine';
 
 type PaymentMethod = 'card' | 'mobile' | null;
@@ -24,6 +23,7 @@ export default function PaymentPage() {
   // Mobile payment states
   const [selectedProvider, setSelectedProvider] = useState<MobileProvider>(null);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [transactionId, setTransactionId] = useState('');
 
   useEffect(() => {
     // Load cart from sessionStorage
@@ -54,8 +54,8 @@ export default function PaymentPage() {
     
     // Validate mobile payment
     if (selectedPayment === 'mobile') {
-      if (!selectedProvider || !phoneNumber) {
-        alert('Please select a provider and enter your phone number');
+      if (!selectedProvider || !phoneNumber || !transactionId) {
+        alert('Please select a provider, enter your phone number, and transaction ID');
         return;
       }
     }
@@ -144,17 +144,19 @@ export default function PaymentPage() {
             >
               Your payment has been successfully processed. Your order will be delivered soon.
             </p>
-            <Button
-              variant="primary"
+            <button
               onClick={() => router.push('/')}
-              className="px-12 py-4 rounded-2xl font-bold"
+              className="px-12 py-4 rounded-2xl font-bold transition-all hover:opacity-90"
               style={{
                 fontSize: '16px',
-                fontFamily: 'Manrope, sans-serif'
+                fontFamily: 'Manrope, sans-serif',
+                background: '#18DC1F',
+                color: '#FFFFFF',
+                boxShadow: '0px 4px 12px rgba(24, 220, 31, 0.3)'
               }}
             >
               Back to Home
-            </Button>
+            </button>
           </div>
         </div>
       </div>
@@ -167,8 +169,8 @@ export default function PaymentPage() {
         {/* Header */}
         <div className="flex items-center justify-center mb-8 gap-3">
           <button
-            onClick={() => setSelectedPayment(null)}
-            className="text-gray-600 hover:text-gray-900"
+            onClick={() => selectedPayment ? setSelectedPayment(null) : router.back()}
+            className="text-gray-600 hover:text-gray-900 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -537,29 +539,30 @@ export default function PaymentPage() {
             <div className="flex gap-4 pt-4">
               <button
                 onClick={() => setSelectedPayment(null)}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100"
+                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100 bg-white border-2 border-gray-200"
                 style={{
                   fontSize: '16px',
                   fontFamily: 'Manrope, sans-serif',
-                  border: '2px solid #E5E7EB',
                   color: '#111811'
                 }}
                 disabled={isProcessing}
               >
                 Cancel
               </button>
-              <Button
-                variant="primary"
+              <button
                 onClick={handlePayment}
                 disabled={isProcessing}
-                className="flex-1 py-4 rounded-2xl font-bold"
+                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:opacity-90 disabled:opacity-50"
                 style={{
                   fontSize: '16px',
-                  fontFamily: 'Manrope, sans-serif'
+                  fontFamily: 'Manrope, sans-serif',
+                  background: '#18DC1F',
+                  color: '#FFFFFF',
+                  boxShadow: '0px 4px 12px rgba(24, 220, 31, 0.3)'
                 }}
               >
                 {isProcessing ? 'Processing...' : 'Pay Now'}
-              </Button>
+              </button>
             </div>
           </div>
         )}
@@ -703,33 +706,99 @@ export default function PaymentPage() {
               </div>
 
               {selectedProvider && (
-                <div>
-                  <label
-                    className="block mb-2"
-                    style={{
-                      fontSize: '16px',
-                      lineHeight: '24px',
-                      fontFamily: 'Manrope, sans-serif',
-                      fontWeight: 500,
-                      color: '#1F2937'
-                    }}
-                  >
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').substring(0, 11))}
-                    placeholder="01XXXXXXXXX"
-                    maxLength={11}
-                    className="w-full px-4 py-4 rounded-3xl border border-[#D1D5DB] focus:outline-none focus:border-[#4CAF50]"
-                    style={{
-                      fontSize: '16px',
-                      fontFamily: 'Manrope, sans-serif',
-                      color: '#6B7280'
-                    }}
-                  />
-                </div>
+                <>
+                  <div className="mb-6">
+                    <h4
+                      className="font-bold mb-3"
+                      style={{
+                        fontSize: '18px',
+                        lineHeight: '28px',
+                        fontFamily: 'Manrope, sans-serif',
+                        color: '#111811'
+                      }}
+                    >
+                      Instructions:
+                    </h4>
+                    <ol className="space-y-2 list-decimal list-inside text-gray-600"
+                      style={{
+                        fontSize: '16px',
+                        lineHeight: '24px',
+                        fontFamily: 'Manrope, sans-serif',
+                        color: '#757575'
+                      }}
+                    >
+                      <li>Open your {selectedProvider === 'bkash' ? 'bKash' : selectedProvider === 'nagad' ? 'Nagad' : 'Rocket'} app on your mobile phone.</li>
+                      <li>Tap on the &apos;Send Money&apos; option.</li>
+                      <li>
+                        Enter merchant number: <span className="font-bold" style={{ color: '#18DC1F' }}>01878670666</span>
+                      </li>
+                      <li>
+                        Enter the amount <span className="font-bold" style={{ color: '#18DC1F' }}>৳{totalPrice}</span> and complete the payment.
+                      </li>
+                      <li>Copy the Transaction ID from your payment confirmation.</li>
+                    </ol>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label
+                        className="block mb-2"
+                        style={{
+                          fontSize: '16px',
+                          lineHeight: '24px',
+                          fontFamily: 'Manrope, sans-serif',
+                          fontWeight: 500,
+                          color: '#1F2937'
+                        }}
+                      >
+                        Your Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').substring(0, 11))}
+                        placeholder="01XXXXXXXXX"
+                        maxLength={11}
+                        className="w-full px-4 py-4 rounded-3xl border border-[#D1D5DB] focus:outline-none focus:border-[#4CAF50]"
+                        style={{
+                          fontSize: '16px',
+                          fontFamily: 'Manrope, sans-serif',
+                          color: '#6B7280'
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        className="block mb-2"
+                        style={{
+                          fontSize: '16px',
+                          lineHeight: '24px',
+                          fontFamily: 'Manrope, sans-serif',
+                          fontWeight: 500,
+                          color: '#1F2937'
+                        }}
+                      >
+                        Transaction ID
+                      </label>
+                      <input
+                        type="text"
+                        value={transactionId}
+                        onChange={(e) => setTransactionId(e.target.value.toUpperCase())}
+                        placeholder="Enter transaction ID from your payment"
+                        className="w-full px-4 py-4 rounded-3xl border border-[#D1D5DB] focus:outline-none focus:border-[#4CAF50]"
+                        style={{
+                          fontSize: '16px',
+                          fontFamily: 'Manrope, sans-serif',
+                          color: '#6B7280'
+                        }}
+                      />
+                      <p className="mt-2 text-sm" style={{ color: '#757575', fontFamily: 'Manrope, sans-serif' }}>
+                        Enter the Transaction ID you received after completing the payment
+                      </p>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
 
@@ -737,29 +806,30 @@ export default function PaymentPage() {
             <div className="flex gap-4 pt-4">
               <button
                 onClick={() => setSelectedPayment(null)}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100"
+                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100 bg-white border-2 border-gray-200"
                 style={{
                   fontSize: '16px',
                   fontFamily: 'Manrope, sans-serif',
-                  border: '2px solid #E5E7EB',
                   color: '#111811'
                 }}
                 disabled={isProcessing}
               >
                 Cancel
               </button>
-              <Button
-                variant="primary"
+              <button
                 onClick={handlePayment}
                 disabled={isProcessing}
-                className="flex-1 py-4 rounded-2xl font-bold"
+                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:opacity-90 disabled:opacity-50"
                 style={{
                   fontSize: '16px',
-                  fontFamily: 'Manrope, sans-serif'
+                  fontFamily: 'Manrope, sans-serif',
+                  background: '#18DC1F',
+                  color: '#FFFFFF',
+                  boxShadow: '0px 4px 12px rgba(24, 220, 31, 0.3)'
                 }}
               >
                 {isProcessing ? 'Processing...' : 'Pay Now'}
-              </Button>
+              </button>
             </div>
           </div>
         )}
