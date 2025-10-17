@@ -6,12 +6,24 @@ import Button from '@/components/Button';
 import { CartItem } from '@/types/medicine';
 
 type PaymentMethod = 'card' | 'mobile' | null;
+type MobileProvider = 'bkash' | 'nagad' | 'rocket' | null;
 
 export default function PaymentPage() {
   const router = useRouter();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<PaymentMethod>(null);
+  const [showThankYou, setShowThankYou] = useState(false);
+  
+  // Card form states
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+  const [cvv, setCvv] = useState('');
+  const [cardholderName, setCardholderName] = useState('');
+  
+  // Mobile payment states
+  const [selectedProvider, setSelectedProvider] = useState<MobileProvider>(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   useEffect(() => {
     // Load cart from sessionStorage
@@ -32,6 +44,22 @@ export default function PaymentPage() {
       return;
     }
     
+    // Validate card payment
+    if (selectedPayment === 'card') {
+      if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
+        alert('Please fill in all card details');
+        return;
+      }
+    }
+    
+    // Validate mobile payment
+    if (selectedPayment === 'mobile') {
+      if (!selectedProvider || !phoneNumber) {
+        alert('Please select a provider and enter your phone number');
+        return;
+      }
+    }
+    
     setIsProcessing(true);
     
     // Simulate payment processing
@@ -40,14 +68,38 @@ export default function PaymentPage() {
     // Clear cart
     sessionStorage.removeItem('cart');
     
-    // Show success message
-    alert('Payment successful! Your order has been placed.');
+    setIsProcessing(false);
     
-    // Redirect to home
-    router.push('/');
+    // Show thank you page
+    setShowThankYou(true);
+  };
+  
+  const formatCardNumber = (value: string): string => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = (matches && matches[0]) || '';
+    const parts = [];
+    
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return value;
+    }
+  };
+  
+  const formatExpiryDate = (value: string): string => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    if (v.length >= 2) {
+      return v.substring(0, 2) + (v.length > 2 ? '/' + v.substring(2, 4) : '');
+    }
+    return v;
   };
 
-  if (cart.length === 0) {
+  if (cart.length === 0 && !showThankYou) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -57,25 +109,87 @@ export default function PaymentPage() {
     );
   }
 
+  // Thank You Page
+  if (showThankYou) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8">
+        <div className="max-w-2xl mx-auto px-4 text-center">
+          <div className="bg-white rounded-3xl shadow-lg p-12">
+            <div className="mb-6">
+              <div className="mx-auto w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <svg className="w-12 h-12 text-[#4CAF50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </div>
+            <h1
+              className="font-bold mb-4"
+              style={{
+                fontSize: '36px',
+                lineHeight: '45px',
+                fontFamily: 'Manrope, sans-serif',
+                color: '#1F2937'
+              }}
+            >
+              Thank You!
+            </h1>
+            <p
+              className="mb-8"
+              style={{
+                fontSize: '18px',
+                lineHeight: '28px',
+                fontFamily: 'Manrope, sans-serif',
+                color: '#6B7280'
+              }}
+            >
+              Your payment has been successfully processed. Your order will be delivered soon.
+            </p>
+            <Button
+              variant="primary"
+              onClick={() => router.push('/')}
+              className="px-12 py-4 rounded-2xl font-bold"
+              style={{
+                fontSize: '16px',
+                fontFamily: 'Manrope, sans-serif'
+              }}
+            >
+              Back to Home
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+      <div className="max-w-2xl mx-auto px-4">
         {/* Header */}
-        <h1
-          className="font-bold mb-8 text-center"
-          style={{
-            fontSize: '32px',
-            lineHeight: '32px',
-            fontFamily: 'Manrope, sans-serif',
-            color: '#111811'
-          }}
-        >
-          <span style={{ color: '#9CA3AF' }}>💰 </span>
-          <span style={{ color: '#4CAF50' }}>Payment</span>
-          <span style={{ color: '#9CA3AF' }}> 💰</span>
-        </h1>
+        <div className="flex items-center justify-center mb-8 gap-3">
+          <button
+            onClick={() => setSelectedPayment(null)}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          </button>
+          <h1
+            className="font-bold text-center"
+            style={{
+              fontSize: '30px',
+              lineHeight: '36px',
+              fontFamily: 'Manrope, sans-serif',
+              color: '#1F2937'
+            }}
+          >
+            UIU Smart Pharmacy
+          </h1>
+        </div>
 
-        {/* Order Summary Card */}
+        {!selectedPayment && (
+          <>
+            {/* Order Summary Card */}
         <div className="bg-white rounded-3xl shadow-sm p-4 mb-8">
           <div className="px-4 pb-2">
             <h2
@@ -199,99 +313,456 @@ export default function PaymentPage() {
           </div>
         </div>
 
-        {/* Choose Payment Method */}
-        <div className="mb-8">
-          <h2
-            className="font-bold text-center mb-5"
-            style={{
-              fontSize: '22px',
-              lineHeight: '27.5px',
-              fontFamily: 'Manrope, sans-serif',
-              color: '#111811',
-              letterSpacing: '-0.33px'
-            }}
-          >
-            Choose Payment Method
-          </h2>
+            {/* Choose Payment Method */}
+            <div className="mb-8">
+              <h2
+                className="font-bold text-center mb-5"
+                style={{
+                  fontSize: '22px',
+                  lineHeight: '27.5px',
+                  fontFamily: 'Manrope, sans-serif',
+                  color: '#111811',
+                  letterSpacing: '-0.33px'
+                }}
+              >
+                Choose Payment Method
+              </h2>
 
-          <div className="flex gap-4 justify-center mb-6">
-            {/* Card Payment Button */}
-            <button
-              onClick={() => setSelectedPayment('card')}
-              className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all ${
-                selectedPayment === 'card'
-                  ? 'bg-[#4CAF50] text-white border-2 border-[#4CAF50]'
-                  : 'bg-white text-[#4CAF50] border-2 border-[#4CAF50]'
-              }`}
-              style={{
-                fontSize: '16px',
-                lineHeight: '24px',
-                fontFamily: 'Manrope, sans-serif',
-                letterSpacing: '0.24px'
-              }}
-            >
-              <span className="text-xl">💳</span>
-              Card Payment
-            </button>
+              <div className="flex gap-4 justify-center mb-6">
+                {/* Card Payment Button */}
+                <button
+                  onClick={() => setSelectedPayment('card')}
+                  className="flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all bg-white text-[#4CAF50] border-2 border-[#4CAF50] hover:bg-green-50"
+                  style={{
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    fontFamily: 'Manrope, sans-serif',
+                    letterSpacing: '0.24px'
+                  }}
+                >
+                  <span className="text-xl">💳</span>
+                  Card Payment
+                </button>
 
-            {/* Mobile Payment Button */}
-            <button
-              onClick={() => setSelectedPayment('mobile')}
-              className={`flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all ${
-                selectedPayment === 'mobile'
-                  ? 'bg-[#111811] text-white border-2 border-[#111811]'
-                  : 'bg-white text-[#111811] border-2 border-[#E5E7EB]'
-              }`}
-              style={{
-                fontSize: '16px',
-                lineHeight: '24px',
-                fontFamily: 'Manrope, sans-serif',
-                letterSpacing: '0.24px'
-              }}
-            >
-              <span className="text-xl">📱</span>
-              Mobile Payment
-            </button>
-          </div>
-
-          {/* Payment Method Icons */}
-          {selectedPayment === 'mobile' && (
-            <div className="flex gap-4 justify-center items-center">
-              <div className="text-sm text-gray-500 font-medium">
-                Supports: bKash, Nagad, Rocket
+                {/* Mobile Payment Button */}
+                <button
+                  onClick={() => setSelectedPayment('mobile')}
+                  className="flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all bg-white text-[#111811] border-2 border-[#E5E7EB] hover:bg-gray-50"
+                  style={{
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    fontFamily: 'Manrope, sans-serif',
+                    letterSpacing: '0.24px'
+                  }}
+                >
+                  <span className="text-xl">📱</span>
+                  Mobile Payment
+                </button>
               </div>
             </div>
-          )}
-        </div>
+          </>
+        )}
 
-        {/* Action Buttons */}
-        <div className="flex gap-4">
-          <button
-            onClick={() => router.back()}
-            className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100"
-            style={{
-              fontSize: '16px',
-              fontFamily: 'Manrope, sans-serif',
-              border: '2px solid #E5E7EB',
-              color: '#111811'
-            }}
-            disabled={isProcessing}
-          >
-            Back to Cart
-          </button>
-          <Button
-            variant="primary"
-            onClick={handlePayment}
-            disabled={isProcessing}
-            className="flex-1 py-4 rounded-2xl font-bold"
-            style={{
-              fontSize: '16px',
-              fontFamily: 'Manrope, sans-serif'
-            }}
-          >
-            {isProcessing ? 'Processing...' : 'Pay Now'}
-          </Button>
-        </div>
+        {/* Card Payment Form */}
+        {selectedPayment === 'card' && (
+          <div className="space-y-6">
+            <div>
+              <h2
+                className="font-bold mb-3"
+                style={{
+                  fontSize: '36px',
+                  lineHeight: '45px',
+                  fontFamily: 'Manrope, sans-serif',
+                  color: '#1F2937',
+                  letterSpacing: '-1.19px'
+                }}
+              >
+                Secure Card Payment
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  lineHeight: '24px',
+                  fontFamily: 'Manrope, sans-serif',
+                  color: '#6B7280'
+                }}
+              >
+                Your payment is encrypted and secure.
+              </p>
+            </div>
+
+            {/* Order Total */}
+            <div className="bg-white rounded-3xl border border-[#E5E7EB] p-4 flex justify-between items-center">
+              <span
+                className="font-medium"
+                style={{
+                  fontSize: '18px',
+                  lineHeight: '28px',
+                  fontFamily: 'Manrope, sans-serif',
+                  color: '#1F2937'
+                }}
+              >
+                Order Total
+              </span>
+              <span
+                className="font-bold"
+                style={{
+                  fontSize: '24px',
+                  lineHeight: '32px',
+                  fontFamily: 'Manrope, sans-serif',
+                  color: '#18DC1F'
+                }}
+              >
+                ৳{totalPrice}
+              </span>
+            </div>
+
+            {/* Card Form */}
+            <div className="space-y-4">
+              <div>
+                <label
+                  className="block mb-2"
+                  style={{
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    fontFamily: 'Manrope, sans-serif',
+                    fontWeight: 500,
+                    color: '#1F2937'
+                  }}
+                >
+                  Card Number
+                </label>
+                <input
+                  type="text"
+                  value={cardNumber}
+                  onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+                  placeholder="0000 0000 0000 0000"
+                  maxLength={19}
+                  className="w-full px-4 py-4 rounded-3xl border border-[#D1D5DB] focus:outline-none focus:border-[#4CAF50]"
+                  style={{
+                    fontSize: '16px',
+                    fontFamily: 'Manrope, sans-serif',
+                    color: '#6B7280'
+                  }}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label
+                    className="block mb-2"
+                    style={{
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      fontFamily: 'Manrope, sans-serif',
+                      fontWeight: 500,
+                      color: '#1F2937'
+                    }}
+                  >
+                    Expiration Date
+                  </label>
+                  <input
+                    type="text"
+                    value={expiryDate}
+                    onChange={(e) => setExpiryDate(formatExpiryDate(e.target.value))}
+                    placeholder="MM/YY"
+                    maxLength={5}
+                    className="w-full px-4 py-4 rounded-3xl border border-[#D1D5DB] focus:outline-none focus:border-[#4CAF50]"
+                    style={{
+                      fontSize: '16px',
+                      fontFamily: 'Manrope, sans-serif',
+                      color: '#6B7280'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    className="block mb-2"
+                    style={{
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      fontFamily: 'Manrope, sans-serif',
+                      fontWeight: 500,
+                      color: '#1F2937'
+                    }}
+                  >
+                    CVV
+                  </label>
+                  <input
+                    type="text"
+                    value={cvv}
+                    onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').substring(0, 3))}
+                    placeholder="123"
+                    maxLength={3}
+                    className="w-full px-4 py-4 rounded-3xl border border-[#D1D5DB] focus:outline-none focus:border-[#4CAF50]"
+                    style={{
+                      fontSize: '16px',
+                      fontFamily: 'Manrope, sans-serif',
+                      color: '#6B7280'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  className="block mb-2"
+                  style={{
+                    fontSize: '16px',
+                    lineHeight: '24px',
+                    fontFamily: 'Manrope, sans-serif',
+                    fontWeight: 500,
+                    color: '#1F2937'
+                  }}
+                >
+                  Cardholder Name
+                </label>
+                <input
+                  type="text"
+                  value={cardholderName}
+                  onChange={(e) => setCardholderName(e.target.value)}
+                  placeholder="John Doe"
+                  className="w-full px-4 py-4 rounded-3xl border border-[#D1D5DB] focus:outline-none focus:border-[#4CAF50]"
+                  style={{
+                    fontSize: '16px',
+                    fontFamily: 'Manrope, sans-serif',
+                    color: '#6B7280'
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-4 pt-4">
+              <button
+                onClick={() => setSelectedPayment(null)}
+                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100"
+                style={{
+                  fontSize: '16px',
+                  fontFamily: 'Manrope, sans-serif',
+                  border: '2px solid #E5E7EB',
+                  color: '#111811'
+                }}
+                disabled={isProcessing}
+              >
+                Cancel
+              </button>
+              <Button
+                variant="primary"
+                onClick={handlePayment}
+                disabled={isProcessing}
+                className="flex-1 py-4 rounded-2xl font-bold"
+                style={{
+                  fontSize: '16px',
+                  fontFamily: 'Manrope, sans-serif'
+                }}
+              >
+                {isProcessing ? 'Processing...' : 'Pay Now'}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Payment Form */}
+        {selectedPayment === 'mobile' && (
+          <div className="space-y-6">
+            <div>
+              <h2
+                className="font-bold mb-3"
+                style={{
+                  fontSize: '36px',
+                  lineHeight: '45px',
+                  fontFamily: 'Manrope, sans-serif',
+                  color: '#1F2937',
+                  letterSpacing: '-1.19px'
+                }}
+              >
+                Mobile Payment
+              </h2>
+            </div>
+
+            {/* Order Total */}
+            <div className="bg-white rounded-3xl border border-[#E5E7EB] p-4 flex justify-between items-center">
+              <span
+                className="font-medium"
+                style={{
+                  fontSize: '18px',
+                  lineHeight: '28px',
+                  fontFamily: 'Manrope, sans-serif',
+                  color: '#1F2937'
+                }}
+              >
+                Order Total
+              </span>
+              <span
+                className="font-bold"
+                style={{
+                  fontSize: '24px',
+                  lineHeight: '32px',
+                  fontFamily: 'Manrope, sans-serif',
+                  color: '#18DC1F'
+                }}
+              >
+                ৳{totalPrice}
+              </span>
+            </div>
+
+            <div>
+              <h3
+                className="font-bold mb-4"
+                style={{
+                  fontSize: '18px',
+                  lineHeight: '22.5px',
+                  fontFamily: 'Manrope, sans-serif',
+                  color: '#111811',
+                  letterSpacing: '-0.27px'
+                }}
+              >
+                Select your preferred mobile payment method
+              </h3>
+
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                {/* bKash */}
+                <button
+                  onClick={() => setSelectedProvider('bkash')}
+                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${
+                    selectedProvider === 'bkash'
+                      ? 'border-b-4 border-[#4CAF50] bg-green-50'
+                      : 'border-b border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="w-10 h-10 bg-pink-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl">
+                    bK
+                  </div>
+                  <span
+                    className="font-bold"
+                    style={{
+                      fontSize: '14px',
+                      lineHeight: '21px',
+                      fontFamily: 'Manrope, sans-serif',
+                      color: selectedProvider === 'bkash' ? '#4CAF50' : '#111811',
+                      letterSpacing: '0.21px'
+                    }}
+                  >
+                    bKash
+                  </span>
+                </button>
+
+                {/* Nagad */}
+                <button
+                  onClick={() => setSelectedProvider('nagad')}
+                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${
+                    selectedProvider === 'nagad'
+                      ? 'border-b-4 border-[#4CAF50] bg-green-50'
+                      : 'border-b border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="w-10 h-10 bg-orange-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl">
+                    N
+                  </div>
+                  <span
+                    className="font-bold"
+                    style={{
+                      fontSize: '14px',
+                      lineHeight: '21px',
+                      fontFamily: 'Manrope, sans-serif',
+                      color: selectedProvider === 'nagad' ? '#4CAF50' : '#111811',
+                      letterSpacing: '0.21px'
+                    }}
+                  >
+                    Nagad
+                  </span>
+                </button>
+
+                {/* Rocket */}
+                <button
+                  onClick={() => setSelectedProvider('rocket')}
+                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${
+                    selectedProvider === 'rocket'
+                      ? 'border-b-4 border-[#4CAF50] bg-green-50'
+                      : 'border-b border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="w-10 h-10 bg-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl">
+                    R
+                  </div>
+                  <span
+                    className="font-bold"
+                    style={{
+                      fontSize: '14px',
+                      lineHeight: '21px',
+                      fontFamily: 'Manrope, sans-serif',
+                      color: selectedProvider === 'rocket' ? '#4CAF50' : '#111811',
+                      letterSpacing: '0.21px'
+                    }}
+                  >
+                    Rocket
+                  </span>
+                </button>
+              </div>
+
+              {selectedProvider && (
+                <div>
+                  <label
+                    className="block mb-2"
+                    style={{
+                      fontSize: '16px',
+                      lineHeight: '24px',
+                      fontFamily: 'Manrope, sans-serif',
+                      fontWeight: 500,
+                      color: '#1F2937'
+                    }}
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').substring(0, 11))}
+                    placeholder="01XXXXXXXXX"
+                    maxLength={11}
+                    className="w-full px-4 py-4 rounded-3xl border border-[#D1D5DB] focus:outline-none focus:border-[#4CAF50]"
+                    style={{
+                      fontSize: '16px',
+                      fontFamily: 'Manrope, sans-serif',
+                      color: '#6B7280'
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-4 pt-4">
+              <button
+                onClick={() => setSelectedPayment(null)}
+                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100"
+                style={{
+                  fontSize: '16px',
+                  fontFamily: 'Manrope, sans-serif',
+                  border: '2px solid #E5E7EB',
+                  color: '#111811'
+                }}
+                disabled={isProcessing}
+              >
+                Cancel
+              </button>
+              <Button
+                variant="primary"
+                onClick={handlePayment}
+                disabled={isProcessing}
+                className="flex-1 py-4 rounded-2xl font-bold"
+                style={{
+                  fontSize: '16px',
+                  fontFamily: 'Manrope, sans-serif'
+                }}
+              >
+                {isProcessing ? 'Processing...' : 'Pay Now'}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
