@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import SearchBar from '@/components/SearchBar';
 import MedicineCard from '@/components/MedicineCard';
 import CartIcon from '@/components/CartIcon';
+import CartModal from '@/components/CartModal';
 import Button from '@/components/Button';
 import { medicines } from '@/data/medicines';
 import { CartItem } from '@/types/medicine';
@@ -13,6 +14,7 @@ export default function SelectMedicinePage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
 
   // Filter medicines based on search query
   const filteredMedicines = useMemo(() => {
@@ -118,16 +120,7 @@ export default function SelectMedicinePage() {
 
           <CartIcon
             itemCount={cartTotals.totalItems}
-            onClick={() => {
-              if (cart.length > 0) {
-                const cartSummary = cart
-                  .map(item => `${item.medicine.name} x${item.quantity}`)
-                  .join('\n');
-                alert(`Cart Items:\n\n${cartSummary}\n\nTotal: ৳${cartTotals.totalPrice}`);
-              } else {
-                alert('Your cart is empty');
-              }
-            }}
+            onClick={() => setIsCartModalOpen(true)}
           />
         </div>
 
@@ -205,6 +198,20 @@ export default function SelectMedicinePage() {
         {/* Spacer for fixed bottom bar */}
         <div className="h-24"></div>
       </div>
+
+      {/* Cart Modal */}
+      <CartModal
+        isOpen={isCartModalOpen}
+        onClose={() => setIsCartModalOpen(false)}
+        cart={cart}
+        totalPrice={cartTotals.totalPrice}
+        onIncrement={handleIncrement}
+        onDecrement={handleDecrement}
+        onProceedToPayment={() => {
+          setIsCartModalOpen(false);
+          handleProceedToPayment();
+        }}
+      />
     </div>
   );
 }
