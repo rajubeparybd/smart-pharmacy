@@ -125,7 +125,7 @@ export default function MedicineCard({
         <button
           onClick={onAdd}
           disabled={isOutOfStock}
-          className={`w-full px-6 py-2 rounded-lg font-semibold transition-all ${
+          className={`w-full px-6 py-2 rounded-lg font-semibold transition-all hover:cursor-pointer ${
             isOutOfStock 
               ? 'opacity-50 cursor-not-allowed' 
               : 'hover:scale-105 active:scale-95'
@@ -144,7 +144,7 @@ export default function MedicineCard({
           {/* Decrement Button */}
           <button
             onClick={onDecrement}
-            className="w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all hover:scale-110 active:scale-95"
+            className="w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all hover:scale-110 active:scale-95 hover:cursor-pointer"
             style={{
               background: '#E5E7EB',
               color: '#374151',
@@ -171,7 +171,7 @@ export default function MedicineCard({
             onClick={onIncrement}
             disabled={!canAddMore}
             className={`w-8 h-8 rounded-full flex items-center justify-center font-bold transition-all ${
-              canAddMore ? 'hover:scale-110 active:scale-95' : 'opacity-50 cursor-not-allowed'
+              canAddMore ? 'hover:scale-110 active:scale-95 hover:cursor-pointer' : 'opacity-50 cursor-not-allowed'
             }`}
             style={{
               background: canAddMore ? '#4CAF50' : '#9CA3AF',

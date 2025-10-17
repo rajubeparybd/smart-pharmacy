@@ -7,7 +7,7 @@ export default function CartIcon({ itemCount, onClick }: CartIconProps) {
   return (
     <button
       onClick={onClick}
-      className="relative transition-all hover:scale-110 active:scale-95"
+      className="relative transition-all hover:scale-110 active:scale-95 hover:cursor-pointer"
     >
       {/* Cart Icon */}
       <svg

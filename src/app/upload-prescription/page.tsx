@@ -84,7 +84,7 @@ export default function UploadPrescriptionPage() {
         <div className="flex justify-start">
           <button
             onClick={() => router.back()}
-            className="font-medium transition-all hover:underline"
+            className="font-medium transition-all hover:underline hover:cursor-pointer"
             style={{
               fontSize: '16px',
               color: '#638864'

@@ -58,7 +58,7 @@ export default function SearchBar({ value, onChange, onSearch }: SearchBarProps)
       {/* Search Button */}
       <button
         onClick={onSearch}
-        className="px-6 py-[13px] rounded-lg font-semibold transition-all hover:scale-105 active:scale-95"
+        className="px-6 py-[13px] rounded-lg font-semibold transition-all hover:scale-105 active:scale-95 hover:cursor-pointer"
         style={{
           background: '#4CAF50',
           color: '#FFFFFF',

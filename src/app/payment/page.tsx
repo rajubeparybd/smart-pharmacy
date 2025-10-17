@@ -146,7 +146,7 @@ export default function PaymentPage() {
             </p>
             <button
               onClick={() => router.push('/')}
-              className="px-12 py-4 rounded-2xl font-bold transition-all hover:opacity-90"
+              className="px-12 py-4 rounded-2xl font-bold transition-all hover:cursor-pointer hover:opacity-90"
               style={{
                 fontSize: '16px',
                 fontFamily: 'Manrope, sans-serif',
@@ -170,7 +170,7 @@ export default function PaymentPage() {
         <div className="flex items-center justify-center mb-8 gap-3">
           <button
             onClick={() => selectedPayment ? setSelectedPayment(null) : router.back()}
-            className="text-gray-600 hover:text-gray-900 transition-colors"
+            className="text-gray-600 hover:text-gray-900 transition-colors hover:cursor-pointer"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -334,7 +334,7 @@ export default function PaymentPage() {
                 {/* Card Payment Button */}
                 <button
                   onClick={() => setSelectedPayment('card')}
-                  className="flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all bg-white text-[#4CAF50] border-2 border-[#4CAF50] hover:bg-green-50"
+                  className="flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all bg-white text-[#4CAF50] border-2 border-[#4CAF50] hover:bg-green-50 hover:cursor-pointer"
                   style={{
                     fontSize: '16px',
                     lineHeight: '24px',
@@ -349,7 +349,7 @@ export default function PaymentPage() {
                 {/* Mobile Payment Button */}
                 <button
                   onClick={() => setSelectedPayment('mobile')}
-                  className="flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all bg-white text-[#111811] border-2 border-[#E5E7EB] hover:bg-gray-50"
+                  className="flex items-center gap-2 px-8 py-4 rounded-2xl font-bold transition-all bg-white text-[#111811] border-2 border-[#E5E7EB] hover:bg-gray-50 hover:cursor-pointer"
                   style={{
                     fontSize: '16px',
                     lineHeight: '24px',
@@ -539,7 +539,7 @@ export default function PaymentPage() {
             <div className="flex gap-4 pt-4">
               <button
                 onClick={() => setSelectedPayment(null)}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100 bg-white border-2 border-gray-200"
+                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100 bg-white border-2 border-gray-200 hover:cursor-pointer"
                 style={{
                   fontSize: '16px',
                   fontFamily: 'Manrope, sans-serif',
@@ -552,7 +552,7 @@ export default function PaymentPage() {
               <button
                 onClick={handlePayment}
                 disabled={isProcessing}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:opacity-90 disabled:opacity-50"
+                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:opacity-90 disabled:opacity-50 hover:cursor-pointer"
                 style={{
                   fontSize: '16px',
                   fontFamily: 'Manrope, sans-serif',
@@ -629,7 +629,7 @@ export default function PaymentPage() {
                 {/* bKash */}
                 <button
                   onClick={() => setSelectedProvider('bkash')}
-                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${
+                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all hover:cursor-pointer ${
                     selectedProvider === 'bkash'
                       ? 'border-b-4 border-[#4CAF50] bg-green-50'
                       : 'border-b border-gray-200 hover:bg-gray-50'
@@ -655,7 +655,7 @@ export default function PaymentPage() {
                 {/* Nagad */}
                 <button
                   onClick={() => setSelectedProvider('nagad')}
-                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${
+                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all hover:cursor-pointer ${
                     selectedProvider === 'nagad'
                       ? 'border-b-4 border-[#4CAF50] bg-green-50'
                       : 'border-b border-gray-200 hover:bg-gray-50'
@@ -681,7 +681,7 @@ export default function PaymentPage() {
                 {/* Rocket */}
                 <button
                   onClick={() => setSelectedProvider('rocket')}
-                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all ${
+                  className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all hover:cursor-pointer ${
                     selectedProvider === 'rocket'
                       ? 'border-b-4 border-[#4CAF50] bg-green-50'
                       : 'border-b border-gray-200 hover:bg-gray-50'
@@ -806,7 +806,7 @@ export default function PaymentPage() {
             <div className="flex gap-4 pt-4">
               <button
                 onClick={() => setSelectedPayment(null)}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100 bg-white border-2 border-gray-200"
+                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:bg-gray-100 bg-white border-2 border-gray-200 hover:cursor-pointer"
                 style={{
                   fontSize: '16px',
                   fontFamily: 'Manrope, sans-serif',
@@ -819,7 +819,7 @@ export default function PaymentPage() {
               <button
                 onClick={handlePayment}
                 disabled={isProcessing}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:opacity-90 disabled:opacity-50"
+                className="flex-1 px-6 py-4 rounded-2xl font-bold transition-all hover:opacity-90 disabled:opacity-50 hover:cursor-pointer"
                 style={{
                   fontSize: '16px',
                   fontFamily: 'Manrope, sans-serif',

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface UploadedFileProps {
   fileName: string;
   filePreview?: string;
@@ -51,7 +53,7 @@ export default function UploadedFile({ fileName, filePreview, onChangeFile }: Up
         {/* Change file button */}
         <button
           onClick={onChangeFile}
-          className="font-normal transition-all hover:underline"
+          className="font-normal transition-all hover:underline hover:cursor-pointer"
           style={{
             fontSize: '14px',
             lineHeight: '20px',
@@ -71,10 +73,12 @@ export default function UploadedFile({ fileName, filePreview, onChangeFile }: Up
             background: '#F3F4F6'
           }}
         >
-          <img 
+          <Image 
+            width={128}
+            height={128}
             src={filePreview} 
-            alt="Preview" 
             className="w-full h-full object-contain"
+            alt="Preview" 
           />
         </div>
       )}

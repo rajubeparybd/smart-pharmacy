@@ -107,7 +107,7 @@ export default function FileUpload({
 
       <button
         type="button"
-        className="font-bold transition-all hover:scale-105 active:scale-95"
+        className="font-bold transition-all hover:scale-105 active:scale-95 hover:cursor-pointer"
         style={{
           background: '#4CAF50',
           color: '#FFFFFF',
