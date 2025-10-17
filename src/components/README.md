@@ -84,3 +84,43 @@ import { Footer } from '@/components';
 <Footer text="Powered by UIU" />
 ```
 
+## FileUpload
+
+A drag-and-drop file upload component with click-to-upload functionality.
+
+### Props
+- `onFileSelect`: `(file: File) => void` - Callback when file is selected
+- `acceptedFormats?`: `string` - Accepted file formats (default: '.pdf,.jpg,.jpeg')
+- `maxSizeMB?`: `number` - Maximum file size in MB (default: 10)
+
+### Usage
+```tsx
+import { FileUpload } from '@/components';
+
+<FileUpload 
+  onFileSelect={(file) => console.log(file)}
+  acceptedFormats=".pdf,.jpg,.jpeg"
+  maxSizeMB={10}
+/>
+```
+
+## UploadedFile
+
+Display component for an uploaded file with preview and change option.
+
+### Props
+- `fileName`: `string` - Name of the uploaded file
+- `filePreview?`: `string` - Preview URL for image files
+- `onChangeFile`: `() => void` - Callback to change the file
+
+### Usage
+```tsx
+import { UploadedFile } from '@/components';
+
+<UploadedFile 
+  fileName="prescription.pdf"
+  filePreview="/path/to/preview.jpg"
+  onChangeFile={() => console.log('Change file')}
+/>
+```
+

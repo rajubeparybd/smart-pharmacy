@@ -1,6 +1,10 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import { Button, DecorativeCircle, WelcomeHeader, Footer } from '@/components';
 
 export default function Home() {
+  const router = useRouter();
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 relative overflow-hidden bg-[#F6F8F6]">
       {/* Background with gradient */}
@@ -51,11 +55,17 @@ export default function Home() {
 
             {/* Buttons section */}
             <div className="w-full flex flex-col items-center gap-6 px-4">
-              <Button variant="primary">
+              <Button 
+                variant="primary"
+                onClick={() => alert('Select Medicine feature coming soon!')}
+              >
                 Select Medicine
               </Button>
 
-              <Button variant="secondary">
+              <Button 
+                variant="secondary"
+                onClick={() => router.push('/upload-prescription')}
+              >
                 Upload Prescription
               </Button>
             </div>
